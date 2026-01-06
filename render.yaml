@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: weld-master-2026
+    runtime: static
+    buildCommand: "" # Static site, no build needed
+    staticPublishPath: ./

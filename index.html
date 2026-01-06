@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>WELD MASTER v1.0</title>
+
+    <link rel="apple-touch-icon" href="hex-icon.png">
+    <link rel="icon" type="image/png" href="hex-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #111;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .menu {
+            text-align: center;
+            background: rgba(34, 34, 34, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #ffaa00;
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+            width: 300px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: #ffaa00;
+            border: none;
+            border-radius: 5px;
+            color: #000;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+            background: #e69900;
+        }
+
+        #gameCanvas {
+            display: none; /* Hidden until game starts */
+            background: #000;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="menu" class="menu">
+        <h1 style="color: #ffaa00; margin-bottom: 0; letter-spacing: 2px;">WELD MASTER</h1>
+        <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">A 2026 HexNemesis© production®</p>
+        
+        <div id="scoreBoard" style="color: #fff; margin: 20px 0;">
+            <div style="font-size: 0.9rem; color: #aaa;">TOP EXAM STREAK</div>
+            <div id="highScore" style="font-size: 2rem; color: #ffaa00; font-weight: bold;">0</div>
+            
+            <div style="font-size: 0.7rem; color: #333; margin-top: 15px; cursor: pointer;" 
+                 onclick="alert('Love Dad')">
+                 v.1.0.4 - System Secure
+            </div>
+        </div>
+
+        <button onclick="startGame('practice')">PRACTICE MODE</button>
+        <button onclick="startGame('exam')">EXAM MODE</button>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        // --- Persistence & State ---
+        let currentMode = '';
+        let currentStreak = 0;
+        let highStreak = localStorage.getItem('weldHighScore') || 0;
+        document.getElementById('highScore').innerText = highStreak;
+
+        // Secret Console Message for the curious developer
+        console.log("%cSecret Message: Love Dad", "color: #ffaa00; font-weight: bold; font-size: 20px;");
+
+        // --- Exam Mode Question Bank ---
+        const questions = [
+            { q: "Crack found in weld bead. Acceptable?", a: "No, Repair", b: "Yes", correct: "a" },
+            { q: "Undercut deeper than 1/32 inch. Pass?", a: "Yes", b: "No, Reject", correct: "b" },
+            { q: "1/4\" Fillet required. Measures 3/16\".", a: "Pass", b: "Fail (Under-sized)", correct: "b" },
+            { q: "Porosity visible on surface.", a: "Reject", b: "Accept", correct: "a" },
+            { q: "Slag trapped between passes.", a: "Slag Inclusion (Reject)", b: "Reinforcement (Pass)", correct: "a" },
+            { q: "Overlap (Cold Lap) detected at toe.", a: "Acceptable", b: "Reject", correct: "b" }
+        ];
+
+        function startGame(mode) {
+            currentMode = mode;
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('gameCanvas').style.display = 'block';
+            
+            // Simulating a successful weld/inspection cycle for this demo
+            setTimeout(winGame, 1000); 
+        }
+
+        function winGame() {
+            if (currentMode === 'exam') {
+                const randomQ = questions[Math.floor(Math.random() * questions.length)];
+                
+                // --- Inspection Logic ---
+                const ans = confirm(`INSPECTION TIME!\n\n${randomQ.q}\n\nOK for: ${randomQ.a}\nCancel for: ${randomQ.b}`);
+                const userChoice = ans ? "a" : "b";
+
+                if (userChoice === randomQ.correct) {
+                    currentStreak++;
+                    alert(`CLEAN INSPECTION! Current Streak: ${currentStreak}`);
+                    
+                    if (currentStreak > highStreak) {
+                        highStreak = currentStreak;
+                        localStorage.setItem('weldHighScore', highStreak);
+                    }
+                    location.reload(); // Reset to menu
+                } else {
+                    alert(`FAILED INSPECTION. Your streak was: ${currentStreak}`);
+                    currentStreak = 0;
+                    location.reload(); // Reset to menu
+                }
+            } else {
+                alert("Great Practice Weld, Jeremiah!");
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
